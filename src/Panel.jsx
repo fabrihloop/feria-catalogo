@@ -34,7 +34,7 @@ function Login() {
   return (
     <>
       <header className="fx-top">
-        <div className="fx-brand"><span className="fx-mono">RB</span><span className="fx-brandtext">{TIENDA}</span></div>
+        <Brand />
       </header>
       <div className="fx-gate">
         <div className="fx-gatecard">
@@ -124,7 +124,7 @@ function Admin({ onLogout }) {
   return (
     <>
       <header className="fx-top">
-        <div className="fx-brand"><span className="fx-mono">RB</span><span className="fx-brandtext">Panel · {TIENDA}</span></div>
+        <Brand subtitle="Panel" />
         <button className="fx-btn ghost" onClick={onLogout}>Cerrar sesión</button>
       </header>
 
@@ -319,6 +319,20 @@ function ImagePicker({ value, onChange }) {
       )}
       <input ref={inputRef} type="file" accept="image/*" style={{ display: "none" }} onChange={pick} />
       {err && <span className="fx-err">{err}</span>}
+    </div>
+  );
+}
+
+function Brand({ subtitle }) {
+  const [broken, setBroken] = useState(false);
+  return (
+    <div className="fx-brand">
+      {broken ? (
+        <span className="fx-mono">RB</span>
+      ) : (
+        <img src="/logotienda.png" alt={TIENDA} style={{ height: 46, width: "auto", display: "block" }} onError={() => setBroken(true)} />
+      )}
+      {subtitle && <span className="fx-brandtext">{subtitle}</span>}
     </div>
   );
 }
