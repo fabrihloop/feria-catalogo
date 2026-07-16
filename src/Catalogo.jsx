@@ -32,10 +32,7 @@ export default function Catalogo() {
   return (
     <>
       <header className="fx-top">
-        <div className="fx-brand">
-          <span className="fx-mono">RB</span>
-          <span className="fx-brandtext">{TIENDA}</span>
-        </div>
+        <Brand />
       </header>
 
       <main className="fx-cat">
@@ -111,6 +108,20 @@ function Card({ it }) {
         </div>
       </div>
     </article>
+  );
+}
+
+function Brand({ subtitle }) {
+  const [broken, setBroken] = useState(false);
+  return (
+    <div className="fx-brand">
+      {broken ? (
+        <span className="fx-mono">RB</span>
+      ) : (
+        <img src="/logotienda.png" alt={TIENDA} style={{ height: 46, width: "auto", display: "block" }} onError={() => setBroken(true)} />
+      )}
+      {subtitle && <span className="fx-brandtext">{subtitle}</span>}
+    </div>
   );
 }
 
