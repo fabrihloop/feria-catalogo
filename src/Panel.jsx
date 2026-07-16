@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { supabase, TIENDA } from "./supabase.js";
-import { gs, monthKey, todayISO, compressImage, CONDICIONES, ESTADOS } from "./helpers.js";
+import { gs, monthKey, todayISO, CONDICIONES, ESTADOS } from "./helpers.js";
 
 export default function Panel() {
   const [session, setSession] = useState(null);
@@ -95,8 +95,10 @@ function Admin({ onLogout }) {
       foto_url: d.foto_url, precio_venta: Number(d.precio_venta) || 0, precio_compra: Number(d.precio_compra) || 0,
       estado: d.estado, fecha_ingreso: d.fecha_ingreso || todayISO(),
     };
-    if (d.id) await supabase.from("carteras").update(payload).eq("id", d.id);
-    else await supabase.from("carteras").insert(payload);
+    let error;
+    if (d.id) ({ error } = await supabase.from("carteras").update(payload).eq("id", d.id));
+    else ({ error } = await supabase.from("carteras").insert(payload));
+    if (error) { alert("No se pudo guardar: " + error.message); return; }
     setEditing(null);
     load();
   };
@@ -253,6 +255,30 @@ function SellForm({ it, onConfirm, onClose }) {
   );
 }
 
+/* Comprime la foto y la deja lista como imagen para guardar junto con la cartera.
+   (No usa Supabase Storage: la imagen viaja con los datos, por el mismo camino que ya funciona.) */
+function comprimirAFoto(file, maxSize = 820, quality = 0.68) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > height && width > maxSize) { height = Math.round((height * maxSize) / width); width = maxSize; }
+        else if (height >= width && height > maxSize) { width = Math.round((width * maxSize) / height); height = maxSize; }
+        const canvas = document.createElement("canvas");
+        canvas.width = width; canvas.height = height;
+        canvas.getContext("2d").drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL("image/jpeg", quality));
+      };
+      img.onerror = reject;
+      img.src = reader.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
 function ImagePicker({ value, onChange }) {
   const inputRef = useRef(null);
   const [busy, setBusy] = useState(false);
@@ -264,14 +290,10 @@ function ImagePicker({ value, onChange }) {
     if (!file) return;
     setErr(""); setBusy(true);
     try {
-      const blob = await compressImage(file);
-      const name = `${(crypto.randomUUID && crypto.randomUUID()) || Date.now()}.jpg`;
-      const { error } = await supabase.storage.from("fotos").upload(name, blob, { contentType: "image/jpeg", upsert: true });
-      if (error) throw error;
-      const { data } = supabase.storage.from("fotos").getPublicUrl(name);
-      onChange(data.publicUrl);
+      const foto = await comprimirAFoto(file);
+      onChange(foto);
     } catch {
-      setErr("No se pudo subir la foto. Probá de nuevo.");
+      setErr("No se pudo procesar la foto. Probá con otra.");
     }
     setBusy(false);
   };
@@ -291,7 +313,7 @@ function ImagePicker({ value, onChange }) {
           <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden>
             <rect x="3" y="5" width="18" height="14" rx="2" /><circle cx="9" cy="10" r="1.6" /><path d="M4 17l5-4 4 3 3-2 4 3" />
           </svg>
-          <span>{busy ? "Subiendo foto…" : "Subir foto o tomar con la cámara"}</span>
+          <span>{busy ? "Procesando foto…" : "Subir foto o tomar con la cámara"}</span>
           <em>JPG o PNG · se optimiza automáticamente</em>
         </button>
       )}
