@@ -11,24 +11,27 @@ export default function Panel() {
     const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setSession(s));
     return () => sub.subscription.unsubscribe();
   }, []);
-// Ícono bordo + título propios al anclar el panel al inicio del iPhone
+// Panel: ícono bordo, título y manifest propios para anclar al inicio del iPhone
   useEffect(() => {
     const prevTitle = document.title;
     document.title = "Panel · Feria RB";
-    let link = document.querySelector("link[rel='apple-touch-icon']");
-    let created = false;
-    if (!link) {
-      link = document.createElement("link");
-      link.rel = "apple-touch-icon";
-      document.head.appendChild(link);
-      created = true;
-    }
-    const prevHref = link.getAttribute("href");
-    link.setAttribute("href", "/apple-touch-icon-panel.png");
+
+    let icon = document.querySelector("link[rel='apple-touch-icon']");
+    let iconCreated = false;
+    if (!icon) { icon = document.createElement("link"); icon.rel = "apple-touch-icon"; document.head.appendChild(icon); iconCreated = true; }
+    const prevIcon = icon.getAttribute("href");
+    icon.setAttribute("href", "/apple-touch-icon-panel.png");
+
+    let mani = document.querySelector("link[rel='manifest']");
+    let maniCreated = false;
+    if (!mani) { mani = document.createElement("link"); mani.rel = "manifest"; document.head.appendChild(mani); maniCreated = true; }
+    const prevMani = mani.getAttribute("href");
+    mani.setAttribute("href", "/panel.webmanifest");
+
     return () => {
       document.title = prevTitle;
-      if (created) link.remove();
-      else if (prevHref) link.setAttribute("href", prevHref);
+      if (iconCreated) icon.remove(); else if (prevIcon) icon.setAttribute("href", prevIcon);
+      if (maniCreated) mani.remove(); else if (prevMani) mani.setAttribute("href", prevMani);
     };
   }, []);
   if (!ready) return <div className="fx-empty" style={{ paddingTop: 80 }}>Cargando…</div>;
