@@ -11,7 +11,26 @@ export default function Panel() {
     const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setSession(s));
     return () => sub.subscription.unsubscribe();
   }, []);
-
+// Ícono bordo + título propios al anclar el panel al inicio del iPhone
+  useEffect(() => {
+    const prevTitle = document.title;
+    document.title = "Panel · Feria RB";
+    let link = document.querySelector("link[rel='apple-touch-icon']");
+    let created = false;
+    if (!link) {
+      link = document.createElement("link");
+      link.rel = "apple-touch-icon";
+      document.head.appendChild(link);
+      created = true;
+    }
+    const prevHref = link.getAttribute("href");
+    link.setAttribute("href", "/apple-touch-icon-panel.png");
+    return () => {
+      document.title = prevTitle;
+      if (created) link.remove();
+      else if (prevHref) link.setAttribute("href", prevHref);
+    };
+  }, []);
   if (!ready) return <div className="fx-empty" style={{ paddingTop: 80 }}>Cargando…</div>;
   if (!session) return <Login />;
   return <Admin onLogout={() => supabase.auth.signOut()} />;
