@@ -330,7 +330,7 @@ function Brand({ subtitle }) {
       {broken ? (
         <span className="fx-mono">RB</span>
       ) : (
-        <img src="/logotienda.png" alt={TIENDA} style={{ height: 46, width: "auto", display: "block" }} onError={() => setBroken(true)} />
+        <img src="/logo-panel.png" alt={TIENDA} style={{ height: 46, width: "auto", display: "block" }} onError={() => setBroken(true)} />
       )}
       {subtitle && <span className="fx-brandtext">{subtitle}</span>}
     </div>
