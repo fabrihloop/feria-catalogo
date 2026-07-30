@@ -209,7 +209,7 @@ function Admin({ onLogout }) {
             {rows.length === 0 && <div className="fx-empty sm">Sin resultados. Agregá tu primera cartera.</div>}
           </div>
         )}
-
+<ResumenMensual items={items} />
         {editing && <ItemForm base={editing} onSave={save} onClose={() => setEditing(null)} />}
         {selling && <SellForm it={selling} onConfirm={confirmSale} onClose={() => setSelling(null)} />}
       </main>
