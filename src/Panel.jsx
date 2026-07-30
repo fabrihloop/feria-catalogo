@@ -374,3 +374,68 @@ function Modal({ title, children, onClose }) {
     </div>
   );
 }
+/* ---------------- Resumen por mes ---------------- */
+function ResumenMensual({ items }) {
+  const meses = useMemo(() => {
+    const map = {};
+    const get = (k) => (map[k] = map[k] || { key: k, vendidas: 0, bruto: 0, costoVendido: 0, compras: 0, ingresadas: 0 });
+    items.forEach((i) => {
+      if (i.estado === "Vendida" && i.fecha_venta) {
+        const m = get(String(i.fecha_venta).slice(0, 7));
+        m.vendidas += 1;
+        m.bruto += i.precio_venta_real || 0;
+        m.costoVendido += i.precio_compra || 0;
+      }
+      if (i.fecha_ingreso) {
+        const m = get(String(i.fecha_ingreso).slice(0, 7));
+        m.compras += i.precio_compra || 0;
+        m.ingresadas += 1;
+      }
+    });
+    return Object.values(map).sort((a, b) => b.key.localeCompare(a.key));
+  }, [items]);
+
+  if (meses.length === 0) return null;
+
+  const nombreMes = (k) => {
+    const [a, m] = k.split("-");
+    const N = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+    return `${N[Number(m) - 1]} ${a}`;
+  };
+
+  const th = { textAlign: "right", padding: "10px 12px", fontSize: 12, letterSpacing: ".04em", textTransform: "uppercase", color: "#8a8078", fontWeight: 500 };
+  const td = { textAlign: "right", padding: "12px", borderTop: "1px solid #ece6dc" };
+
+  return (
+    <section style={{ marginTop: 36 }}>
+      <h3 style={{ margin: "0 0 12px", fontSize: 18 }}>Resumen por mes</h3>
+      <div style={{ overflowX: "auto", background: "#fff", border: "1px solid #ece6dc", borderRadius: 14 }}>
+        <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 620 }}>
+          <thead>
+            <tr>
+              <th style={{ ...th, textAlign: "left" }}>Mes</th>
+              <th style={th}>Vendidas</th>
+              <th style={th}>Ingreso bruto</th>
+              <th style={th}>Ingreso neto</th>
+              <th style={th}>Mercadería nueva</th>
+            </tr>
+          </thead>
+          <tbody>
+            {meses.map((m) => (
+              <tr key={m.key}>
+                <td style={{ ...td, textAlign: "left", fontWeight: 500 }}>{nombreMes(m.key)}</td>
+                <td style={td}>{m.vendidas}</td>
+                <td style={td}>{gs(m.bruto)}</td>
+                <td style={{ ...td, color: m.bruto - m.costoVendido >= 0 ? "#1f7a4d" : "#b03636", fontWeight: 500 }}>{gs(m.bruto - m.costoVendido)}</td>
+                <td style={{ ...td, color: "#8a8078" }}>{m.compras ? gs(m.compras) : "—"}{m.ingresadas ? ` · ${m.ingresadas} u.` : ""}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p style={{ fontSize: 12.5, color: "#8a8078", marginTop: 10, lineHeight: 1.5 }}>
+        <strong>Ingreso bruto:</strong> total cobrado por lo vendido ese mes. <strong>Ingreso neto:</strong> lo que quedó después de descontar lo que costaron esas carteras. <strong>Mercadería nueva:</strong> lo pagado por las carteras que entraron al inventario ese mes.
+      </p>
+    </section>
+  );
+}
