@@ -38,7 +38,7 @@ export default function Catalogo() {
       <main className="fx-cat">
         <div className="fx-hero">
           <span className="fx-eyebrow">Piezas únicas · originales</span>
-          <h1 className="fx-h1">Carteras de lujo, cuidadosamente seleccionadas</h1>
+          <h1 className="fx-h1">Luxury preloved bags</h1>
           <p className="fx-sub">Cada cartera es una sola. Consultá disponibilidad directo por WhatsApp.</p>
         </div>
 
