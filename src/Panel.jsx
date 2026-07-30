@@ -147,7 +147,7 @@ function Admin({ onLogout }) {
   return (
     <>
       <header className="fx-top">
-        <Brand subtitle="Panel" />
+        <Brand subtitle="Inventario" />
         <button className="fx-btn ghost" onClick={onLogout}>Cerrar sesión</button>
       </header>
 
