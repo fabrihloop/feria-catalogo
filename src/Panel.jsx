@@ -14,7 +14,7 @@ export default function Panel() {
 // Panel: ícono bordo, título y manifest propios para anclar al inicio del iPhone
   useEffect(() => {
     const prevTitle = document.title;
-    document.title = "Panel · Feria RB";
+    document.title = "Inventario · Feria RB";
 
     let icon = document.querySelector("link[rel='apple-touch-icon']");
     let iconCreated = false;
@@ -58,10 +58,9 @@ function Login() {
       <header className="fx-top">
         <Brand />
       </header>
-      <div className="fx-gate">
-        <div className="fx-gatecard">
-          <span className="fx-mono big">RB</span>
-          <h2>Panel privado</h2>
+      <div className="fx-gatecard">
+  <img src="/logotienda.png" alt="Feria RB" style={{ height: 88, width: "auto", display: "block", margin: "0 auto 6px" }} />
+  <h2>Inventario</h2>
           <p>Ingresá con tu email y contraseña.</p>
           <input className="fx-input" type="email" placeholder="Email" autoComplete="username"
             value={email} onChange={(e) => { setErr(""); setEmail(e.target.value); }} />
