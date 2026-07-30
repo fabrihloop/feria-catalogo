@@ -1,0 +1,14 @@
+{
+  "name": "Panel · Feria RB",
+  "short_name": "Panel RB",
+  "start_url": "/panel",
+  "scope": "/panel",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#5e1f2e",
+  "icons": [
+    { "src": "/icon-panel-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-panel-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/apple-touch-icon-panel.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}
