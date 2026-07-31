@@ -115,7 +115,8 @@ function Admin({ onLogout }) {
   const save = async (d) => {
     const payload = {
       marca: d.marca, modelo: d.modelo, descripcion: d.descripcion, condicion: d.condicion,
-      foto_url: d.foto_url, precio_venta: Number(d.precio_venta) || 0, precio_compra: Number(d.precio_compra) || 0,
+      fotos: d.fotos || [], foto_url: (d.fotos && d.fotos[0]) || "",
+      precio_venta: Number(d.precio_venta) || 0, precio_compra: Number(d.precio_compra) || 0,
       estado: d.estado, fecha_ingreso: d.fecha_ingreso || todayISO(),
     };
     let error;
@@ -230,7 +231,8 @@ function Stat({ label, value, money, hi, accent }) {
 function ItemForm({ base, onSave, onClose }) {
   const [d, setD] = useState({
     id: base.id, marca: base.marca || "", modelo: base.modelo || "", descripcion: base.descripcion || "",
-    condicion: base.condicion || "Excelente", foto_url: base.foto_url || "",
+    condicion: base.condicion || "Excelente",
+    fotos: Array.isArray(base.fotos) && base.fotos.length ? base.fotos : base.foto_url ? [base.foto_url] : [],
     precio_compra: base.precio_compra || "", precio_venta: base.precio_venta || "",
     estado: base.estado || "Disponible", fecha_ingreso: base.fecha_ingreso || todayISO(),
   });
@@ -246,7 +248,7 @@ function ItemForm({ base, onSave, onClose }) {
         <Field label="Estado"><select className="fx-input" value={d.estado} onChange={(e) => set("estado", e.target.value)}>{ESTADOS.map((s) => <option key={s}>{s}</option>)}</select></Field>
         <Field label="Precio de compra (costo)"><input className="fx-input" type="number" value={d.precio_compra} onChange={(e) => set("precio_compra", e.target.value)} placeholder="0" /></Field>
         <Field label="Precio de venta (público)"><input className="fx-input" type="number" value={d.precio_venta} onChange={(e) => set("precio_venta", e.target.value)} placeholder="0" /></Field>
-        <Field label="Foto de la cartera" full><ImagePicker value={d.foto_url} onChange={(v) => set("foto_url", v)} /></Field>
+        <Field label="Fotos de la cartera (hasta 4)" full><ImagePickerMulti value={d.fotos} onChange={(v) => set("fotos", v)} max={4} /></Field>
       </div>
       <div className="fx-modalbtns">
         <button className="fx-btn ghost" onClick={onClose}>Cancelar</button>
@@ -438,4 +440,69 @@ function ResumenMensual({ items }) {
       </p>
     </section>
   );
+  function ImagePickerMulti({ value = [], onChange, max = 4 }) {
+  const inputRef = useRef(null);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+  const fotos = Array.isArray(value) ? value : [];
+
+  const pick = async (e) => {
+    const files = Array.from(e.target.files || []);
+    e.target.value = "";
+    if (!files.length) return;
+    setErr(""); setBusy(true);
+    try {
+      const libres = max - fotos.length;
+      const nuevas = [];
+      for (const f of files.slice(0, libres)) nuevas.push(await comprimirAFoto(f));
+      onChange([...fotos, ...nuevas]);
+      if (files.length > libres) setErr(`Se agregaron ${libres}. El máximo es ${max} fotos.`);
+    } catch {
+      setErr("No se pudo procesar alguna foto. Probá con otra.");
+    }
+    setBusy(false);
+  };
+
+  const quitar = (i) => onChange(fotos.filter((_, k) => k !== i));
+  const mover = (i, dir) => {
+    const n = [...fotos];
+    const j = i + dir;
+    if (j < 0 || j >= n.length) return;
+    [n[i], n[j]] = [n[j], n[i]];
+    onChange(n);
+  };
+
+  return (
+    <div className="fx-imgpick">
+      {fotos.length > 0 && (
+        <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginBottom: 10 }}>
+          {fotos.map((src, i) => (
+            <div key={i} style={{ position: "relative", width: 96 }}>
+              <img src={src} alt={`Foto ${i + 1}`} style={{ width: 96, height: 96, objectFit: "cover", borderRadius: 10, border: "1px solid #e6ded2", display: "block" }} />
+              {i === 0 && <span style={{ position: "absolute", top: 4, left: 4, background: "rgba(0,0,0,.7)", color: "#fff", fontSize: 10, padding: "2px 6px", borderRadius: 6 }}>Portada</span>}
+              <div style={{ display: "flex", gap: 4, marginTop: 4, justifyContent: "center" }}>
+                <button type="button" className="fx-mini" onClick={() => mover(i, -1)} disabled={i === 0} style={{ padding: "2px 7px" }}>←</button>
+                <button type="button" className="fx-mini" onClick={() => mover(i, 1)} disabled={i === fotos.length - 1} style={{ padding: "2px 7px" }}>→</button>
+                <button type="button" className="fx-mini del" onClick={() => quitar(i)} style={{ padding: "2px 7px" }}>✕</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {fotos.length < max && (
+        <button type="button" className="fx-drop" onClick={() => inputRef.current?.click()} disabled={busy}>
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden>
+            <rect x="3" y="5" width="18" height="14" rx="2" /><circle cx="9" cy="10" r="1.6" /><path d="M4 17l5-4 4 3 3-2 4 3" />
+          </svg>
+          <span>{busy ? "Procesando fotos…" : fotos.length ? "Agregar otra foto" : "Subir fotos o tomar con la cámara"}</span>
+          <em>Hasta {max} fotos · la primera es la portada</em>
+        </button>
+      )}
+
+      <input ref={inputRef} type="file" accept="image/*" multiple style={{ display: "none" }} onChange={pick} />
+      {err && <span className="fx-err">{err}</span>}
+    </div>
+  );
+}
 }
