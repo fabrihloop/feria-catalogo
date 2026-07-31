@@ -304,7 +304,9 @@ function comprimirAFoto(file, maxSize = 820, quality = 0.68) {
   });
 }
 
-function ImagePicker({ value, onChange }) {
+}
+
+function ImagePickerMulti({ value = [], onChange, max = 4 }) {
   const inputRef = useRef(null);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
@@ -504,5 +506,4 @@ function ResumenMensual({ items }) {
       {err && <span className="fx-err">{err}</span>}
     </div>
   );
-}
 }
