@@ -120,7 +120,7 @@ function Card({ it }) {
           </>
         )}
 
-        {vendida && <span className="fx-stamp">Vendida</span>}
+        {vendida && <span className="fx-stamp" style={selloAgotado}>Agotado</span>}
         {reservada && <span className="fx-badge res">Reservada</span>}
       </div>
 
@@ -145,6 +145,16 @@ function Card({ it }) {
     </article>
   );
 }
+
+/* Sello "Agotado": horizontal (sin inclinación) y más chico que el original */
+const selloAgotado = {
+  transform: "translate(-50%,-50%)",
+  fontSize: 19,
+  letterSpacing: ".2em",
+  borderWidth: 2,
+  padding: "5px 16px",
+  whiteSpace: "nowrap",
+};
 
 function navBtn(side) {
   return {
