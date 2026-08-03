@@ -2,6 +2,32 @@ import React, { useState, useEffect, useMemo, useRef } from "react";
 import { supabase, TIENDA, WHATSAPP } from "./supabase.js";
 import { gs } from "./helpers.js";
 
+/* Portada con foto — sólo en celular (hasta 720px de ancho).
+   En pantallas grandes se mantiene el hero tipográfico de siempre. */
+const estiloPortada = `
+@media (max-width: 720px) {
+  .fx-cat .fx-hero {
+    position: relative;
+    margin: -44px -28px 30px;
+    padding: 0 22px 34px;
+    aspect-ratio: 4 / 5;
+    min-height: 420px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    text-align: center;
+    background-image:
+      linear-gradient(to bottom, rgba(0,0,0,.10) 0%, rgba(0,0,0,.28) 45%, rgba(0,0,0,.74) 100%),
+      url('/portada-movil.jpg');
+    background-size: cover;
+    background-position: center;
+  }
+  .fx-cat .fx-hero .fx-eyebrow { color: #E9D8B2; }
+  .fx-cat .fx-hero .fx-h1 { color: #FFFFFF; margin-bottom: 6px; }
+  .fx-cat .fx-hero .fx-sub { color: #EEE8DE; }
+}
+`;
+
 export default function Catalogo() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,6 +57,8 @@ export default function Catalogo() {
 
   return (
     <>
+      <style>{estiloPortada}</style>
+
       <header className="fx-top">
         <Brand />
       </header>
