@@ -25,14 +25,19 @@ const estiloPortada = `
   .fx-cat .fx-hero .fx-eyebrow { color: #E9D8B2; }
   .fx-cat .fx-hero .fx-h1 {
     color: #FFFFFF;
-    font-size: clamp(42px, 13vw, 60px);
+    font-size: clamp(34px, 9.6vw, 44px);
     font-weight: 600;
-    line-height: 1.0;
-    letter-spacing: -.015em;
-    margin: 14px 0 12px;
+    line-height: 1.04;
+    letter-spacing: -.01em;
+    margin: 12px 0 10px;
     text-shadow: 0 2px 18px rgba(0,0,0,.35);
   }
-  .fx-cat .fx-hero .fx-sub { color: #EEE8DE; }
+  .fx-cat .fx-hero .fx-sub {
+    color: #EEE8DE;
+    font-size: 13px;
+    max-width: 300px;
+    margin: 0 auto;
+  }
 }
 `;
 
