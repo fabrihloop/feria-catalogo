@@ -9,21 +9,29 @@ const estiloPortada = `
   .fx-cat .fx-hero {
     position: relative;
     margin: -44px -28px 30px;
-    padding: 0 22px 34px;
+    padding: 0 20px;
     aspect-ratio: 4 / 5;
     min-height: 420px;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
+    justify-content: center;
     text-align: center;
     background-image:
-      linear-gradient(to bottom, rgba(0,0,0,.10) 0%, rgba(0,0,0,.28) 45%, rgba(0,0,0,.74) 100%),
+      linear-gradient(to bottom, rgba(0,0,0,.30) 0%, rgba(0,0,0,.46) 50%, rgba(0,0,0,.48) 100%),
       url('/portada-movil.jpg');
     background-size: cover;
     background-position: center;
   }
   .fx-cat .fx-hero .fx-eyebrow { color: #E9D8B2; }
-  .fx-cat .fx-hero .fx-h1 { color: #FFFFFF; margin-bottom: 6px; }
+  .fx-cat .fx-hero .fx-h1 {
+    color: #FFFFFF;
+    font-size: clamp(42px, 13vw, 60px);
+    font-weight: 600;
+    line-height: 1.0;
+    letter-spacing: -.015em;
+    margin: 14px 0 12px;
+    text-shadow: 0 2px 18px rgba(0,0,0,.35);
+  }
   .fx-cat .fx-hero .fx-sub { color: #EEE8DE; }
 }
 `;
