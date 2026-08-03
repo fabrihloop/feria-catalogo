@@ -9,15 +9,15 @@ const estiloPortada = `
   .fx-cat .fx-hero {
     position: relative;
     margin: -44px -28px 30px;
-    padding: 0 22px;
+    padding: 0 22px 34px;
     aspect-ratio: 4 / 5;
     min-height: 420px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-end;
     text-align: center;
     background-image:
-      linear-gradient(to bottom, rgba(0,0,0,.26) 0%, rgba(0,0,0,.44) 50%, rgba(0,0,0,.46) 100%),
+      linear-gradient(to bottom, rgba(0,0,0,.10) 0%, rgba(0,0,0,.28) 45%, rgba(0,0,0,.74) 100%),
       url('/portada-movil.jpg');
     background-size: cover;
     background-position: center;
@@ -67,7 +67,7 @@ export default function Catalogo() {
         <div className="fx-hero">
           <span className="fx-eyebrow">Piezas únicas · originales</span>
           <h1 className="fx-h1">Luxury preloved bags</h1>
-          <p className="fx-sub">Cada cartera es una sola. Consultá disponibilidad directo por WhatsApp.</p>
+          <p className="fx-sub">Consultá disponibilidad directo por WhatsApp.</p>
         </div>
 
         {loading ? (
